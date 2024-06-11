@@ -1,17 +1,37 @@
 import { useParams } from "react-router-dom";
 import { Container, Heading, Text, Box } from "@chakra-ui/react";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '../integrations/supabase/index.js';
 
-const jobs = [
-  { id: 1, title: "Product Manager", category: "Product", description: "Manage product lifecycle and roadmap." },
-  { id: 2, title: "UX Designer", category: "Design", description: "Design user interfaces and experiences." },
-  { id: 3, title: "Frontend Engineer", category: "Engineering", description: "Develop and maintain the frontend of applications." },
-  { id: 4, title: "Backend Engineer", category: "Engineering", description: "Develop and maintain the backend of applications." },
-  { id: 5, title: "Product Designer", category: "Design", description: "Design products from concept to completion." },
-];
+const fetchJobById = async (id) => {
+  const { data, error } = await supabase
+    .from('jobs')
+    .select('*')
+    .eq('id', id)
+    .single();
+  if (error) throw new Error(error.message);
+  return data;
+};
 
 const JobDetail = () => {
   const { id } = useParams();
-  const job = jobs.find(job => job.id === parseInt(id));
+  const { data: job, error, isLoading } = useQuery(['job', id], () => fetchJobById(id));
+
+  if (isLoading) {
+    return (
+      <Container maxW="container.xl" py={10}>
+        <div>Loading...</div>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container maxW="container.xl" py={10}>
+        <div>Error: {error.message}</div>
+      </Container>
+    );
+  }
 
   if (!job) {
     return (
@@ -24,9 +44,9 @@ const JobDetail = () => {
   return (
     <Container maxW="container.xl" py={10}>
       <Box p={5} shadow="md" borderWidth="1px" borderRadius="md">
-        <Heading as="h1" size="2xl">{job.title}</Heading>
-        <Text mt={4} fontSize="lg">{job.category}</Text>
-        <Text mt={4}>{job.description}</Text>
+        <Heading as="h1" size="2xl">{job.jobs_title}</Heading>
+        <Text mt={4} fontSize="lg">{job.job_area}</Text>
+        <Text mt={4}>{job.job_type}</Text>
       </Box>
     </Container>
   );
