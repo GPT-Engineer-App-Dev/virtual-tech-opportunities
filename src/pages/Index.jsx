@@ -1,19 +1,21 @@
 import { useState } from "react";
 import { Container, VStack, Text, Button, HStack, Box, SimpleGrid, Heading, Link } from "@chakra-ui/react";
 import { Link as RouterLink } from "react-router-dom"; // Import Link from react-router-dom
-
-const jobs = [
-  { id: 1, title: "Product Manager", category: "Product" },
-  { id: 2, title: "UX Designer", category: "Design" },
-  { id: 3, title: "Frontend Engineer", category: "Engineering" },
-  { id: 4, title: "Backend Engineer", category: "Engineering" },
-  { id: 5, title: "Product Designer", category: "Design" },
-];
+import { useJobs } from "../integrations/supabase/index.js";
 
 const Index = () => {
   const [filter, setFilter] = useState("All");
+  const { data: jobs, error, isLoading } = useJobs();
 
-  const filteredJobs = filter === "All" ? jobs : jobs.filter(job => job.category === filter);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
+  const filteredJobs = filter === "All" ? jobs : jobs.filter(job => job.job_area === filter);
 
   return (
     <Container maxW="container.xl" py={10}>
@@ -29,9 +31,9 @@ const Index = () => {
           {filteredJobs.map(job => (
             <Box key={job.id} p={5} shadow="md" borderWidth="1px" borderRadius="md">
               <Heading fontSize="xl">
-                <Link as={RouterLink} to={`/job/${job.id}`}>{job.title}</Link> {/* Add link to job detail */}
+                <Link as={RouterLink} to={`/job/${job.id}`}>{job.jobs_title}</Link>
               </Heading>
-              <Text mt={4}>{job.category}</Text>
+              <Text mt={4}>{job.job_area}</Text>
             </Box>
           ))}
         </SimpleGrid>
