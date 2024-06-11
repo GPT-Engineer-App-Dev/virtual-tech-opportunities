@@ -1,17 +1,37 @@
-// Update this page (the content is just a fallback if you fail and example)
-// Use chakra-ui
-import { Container, Text, VStack } from "@chakra-ui/react";
+import { useState } from "react";
+import { Container, VStack, Text, Button, HStack, Box, SimpleGrid, Heading } from "@chakra-ui/react";
 
-// Example of using react-icons
-// import { FaRocket } from "react-icons/fa";
-// <IconButton aria-label="Add" icon={<FaRocket />} size="lg" />; // IconButton would also have to be imported from chakra
+const jobs = [
+  { id: 1, title: "Product Manager", category: "Product" },
+  { id: 2, title: "UX Designer", category: "Design" },
+  { id: 3, title: "Frontend Engineer", category: "Engineering" },
+  { id: 4, title: "Backend Engineer", category: "Engineering" },
+  { id: 5, title: "Product Designer", category: "Design" },
+];
 
 const Index = () => {
+  const [filter, setFilter] = useState("All");
+
+  const filteredJobs = filter === "All" ? jobs : jobs.filter(job => job.category === filter);
+
   return (
-    <Container centerContent maxW="container.md" height="100vh" display="flex" flexDirection="column" justifyContent="center" alignItems="center">
-      <VStack spacing={4}>
-        <Text fontSize="2xl">Your Blank Canvas</Text>
-        <Text>Chat with the agent to start making edits.</Text>
+    <Container maxW="container.xl" py={10}>
+      <VStack spacing={8}>
+        <Heading as="h1" size="2xl">Remote Tech Jobs</Heading>
+        <HStack spacing={4}>
+          <Button colorScheme="blue" onClick={() => setFilter("All")}>All</Button>
+          <Button colorScheme="blue" onClick={() => setFilter("Product")}>Product</Button>
+          <Button colorScheme="blue" onClick={() => setFilter("Design")}>Design</Button>
+          <Button colorScheme="blue" onClick={() => setFilter("Engineering")}>Engineering</Button>
+        </HStack>
+        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} spacing={8} w="full">
+          {filteredJobs.map(job => (
+            <Box key={job.id} p={5} shadow="md" borderWidth="1px" borderRadius="md">
+              <Heading fontSize="xl">{job.title}</Heading>
+              <Text mt={4}>{job.category}</Text>
+            </Box>
+          ))}
+        </SimpleGrid>
       </VStack>
     </Container>
   );
