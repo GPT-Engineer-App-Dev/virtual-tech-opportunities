@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Container, VStack, Text, Button, HStack, Box, SimpleGrid, Heading, Link } from "@chakra-ui/react";
-import { Link as RouterLink } from "react-router-dom"; // Import Link from react-router-dom
+import { Link as RouterLink } from "react-router-dom";
 import { useJobs } from "../integrations/supabase/index.js";
 
 const Index = () => {
